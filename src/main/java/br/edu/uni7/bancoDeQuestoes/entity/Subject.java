@@ -10,6 +10,7 @@ public class Subject {
 	@GeneratedValue
 	private Long id;
 	private String name;
+	private String topic;
 	
 	public Subject() {}
 	
@@ -33,9 +34,17 @@ public class Subject {
 	public void setName(String name) {
 		this.name = name;
 	}
+	
+	public String getTopic() {
+		return topic;
+	}
+
+	public void setTopic(String topic) {
+		this.topic = topic;
+	}
 
 	@Override
 	public String toString() {
-		return "Subject [id=" + id + ", name=" + name + "]";
+		return "Subject [id=" + id + ", name=" + name + ", topic=" + topic + "]";
 	}
 }

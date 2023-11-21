@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
 
 import br.edu.uni7.bancoDeQuestoes.entity.Question;
 import br.edu.uni7.bancoDeQuestoes.entity.Statement;
@@ -24,6 +26,7 @@ import br.edu.uni7.bancoDeQuestoes.persistence.SubjectRepository;
 import br.edu.uni7.bancoDeQuestoes.persistence.TemplateRepository;
 
 @RestController
+@CrossOrigin(origins = "*")
 public class QuestionController {
 	@Autowired
 	private QuestionRepository questionRepository;
@@ -396,6 +399,21 @@ public class QuestionController {
 			response = new ResponseEntity<Question>(question, HttpStatus.OK);
 		}else {
 			response = new ResponseEntity<Question>(question, HttpStatus.NOT_FOUND);
+		}
+		
+		return response;
+	}
+	
+	@GetMapping(path = "/questionsBySubject/{id}")
+	public ResponseEntity<List<Question>> findQuestionsBySubject(@PathVariable(name = "id") Long id){
+		ResponseEntity<List<Question>> response = null;
+		
+		List<Question> questions = questionRepository.findQuestionsBySubjectId(id);
+		if(questions == null || questions.isEmpty()) {
+			response = ResponseEntity.noContent().build();
+		}else {
+			System.out.println(questions.get(0));
+			response = ResponseEntity.ok(questions);
 		}
 		
 		return response;

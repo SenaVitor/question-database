@@ -25,6 +25,14 @@ public class Question {
 		this.subject = subject;
 	}
 
+	public Question(Long id, String title, String enunciado, String enunciadoImage, 
+			String gabarito, String gabaritoImage, String name) {
+			this.id = id;
+			this.statement = new Statement(null, title, enunciado, enunciadoImage);
+			this.template = new Template(null, gabarito, gabaritoImage);
+			this.subject = new Subject(null, name);
+	}
+
 	public Long getId() {
 		return id;
 	}

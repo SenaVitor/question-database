@@ -1,6 +1,7 @@
 package br.edu.uni7.bancoDeQuestoes.web;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.ModelAndView;
 
 import br.edu.uni7.bancoDeQuestoes.entity.Question;
 import br.edu.uni7.bancoDeQuestoes.entity.Statement;
@@ -210,6 +210,9 @@ public class QuestionController {
 			
 			if(subject.getName() != null) {
 				fromDB.setName(subject.getName());					
+			}
+			if(subject.getTopic() != null) {
+				fromDB.setTopic(subject.getTopic());					
 			}
 				
 			try {
@@ -425,6 +428,36 @@ public class QuestionController {
 		ResponseEntity<Question> response = null;
 		
 		try {
+			question = questionRepository.save(question);
+			response = new ResponseEntity<>(question, HttpStatus.CREATED);
+		} catch (Exception e) {
+			response = ResponseEntity.badRequest().build();
+		}
+		
+		return response;
+	}
+	
+	@PostMapping(path = "/questionsAndDependences")
+	public ResponseEntity<Question> createQuestion(
+			@RequestBody(required = true)  Map<String, String> requestMap) {
+		ResponseEntity<Question> response = null;
+
+	    String title = requestMap.get("title");
+	    String enunciado = requestMap.get("enunciado");
+	    String enunciadoImage = requestMap.get("enunciadoImage");
+	    String gabarito = requestMap.get("gabarito");
+	    String gabaritoImage = requestMap.get("gabaritoImage");
+	    String name = requestMap.get("name");
+	    
+		Question question = new Question(null, title, enunciado, enunciadoImage, gabarito, gabaritoImage, name);
+		Subject subject = question.getSubject();
+		Statement statement = question.getStatement();
+		Template template = question.getTemplate();
+
+		try {
+			subject = subjectRepository.save(subject);
+			statement = statementRepository.save(statement);
+			template = templateRepository.save(template);
 			question = questionRepository.save(question);
 			response = new ResponseEntity<>(question, HttpStatus.CREATED);
 		} catch (Exception e) {

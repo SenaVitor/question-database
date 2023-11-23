@@ -415,7 +415,6 @@ public class QuestionController {
 		if(questions == null || questions.isEmpty()) {
 			response = ResponseEntity.noContent().build();
 		}else {
-			System.out.println(questions.get(0));
 			response = ResponseEntity.ok(questions);
 		}
 		
@@ -448,16 +447,22 @@ public class QuestionController {
 	    String gabarito = requestMap.get("gabarito");
 	    String gabaritoImage = requestMap.get("gabaritoImage");
 	    String name = requestMap.get("name");
+	    String topic = requestMap.get("assunto");
 	    
-		Question question = new Question(null, title, enunciado, enunciadoImage, gabarito, gabaritoImage, name);
+		Question question = new Question(null, title, enunciado, enunciadoImage, gabarito, gabaritoImage, name, topic);
 		Subject subject = question.getSubject();
 		Statement statement = question.getStatement();
 		Template template = question.getTemplate();
-
+		Optional<Subject> optional = subjectRepository.findByNameAndTopic(name, topic);
 		try {
-			subject = subjectRepository.save(subject);
 			statement = statementRepository.save(statement);
 			template = templateRepository.save(template);
+			if(optional.isPresent()) {
+				subject = optional.get();	
+				question.setSubject(subject);
+			}else {
+				subject = subjectRepository.save(subject);				
+			}
 			question = questionRepository.save(question);
 			response = new ResponseEntity<>(question, HttpStatus.CREATED);
 		} catch (Exception e) {
